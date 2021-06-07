@@ -370,6 +370,7 @@ public class DBproject{
 		try {
 			query = "INSERT INTO Patient (patient_ID, name, gtype, age, address) VALUES ";
 			query += String.format("('%2d', '%s', '%s', '%2d', '%s')", id, name, gender, age, address); 
+			esql.executeUpdate(query);
 		}catch(Exception e) {
 			System.out.println("Insert Patient Query Failed");
 		}
@@ -381,6 +382,88 @@ public class DBproject{
 
 	public static void MakeAppointment(DBproject esql) {//4
 		// Given a patient, a doctor and an appointment of the doctor that s/he wants to take, add an appointment to the DB
+		int patientID;
+		int doctorID;
+		int appointmentID;
+		String query;
+
+		// Get patient id
+		do {
+			try {
+				System.out.print("Please enter the patient ID: ");
+				patientID = Integer.parseInt(in.readLine());
+
+				query = "SELECT * FROM Patient WHERE patient_ID = " + patientID;
+				int rows = esql.executeQuery(query);
+				if (rows != 1) {
+					System.out.println("That patient does not exist!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Input is invalid. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// get doctor id
+		do {
+			try {
+				System.out.print("Please enter the doctor ID: ");
+				doctorID = Integer.parseInt(in.readLine());	
+
+				query = "SELECT * FROM Doctor WHERE doctor_ID = " + doctorID;
+				int rows = esql.executeQuery(query);
+				if (rows != 1) {
+					System.out.println("That doctor does not exist!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// get appointment id AND check if it corresponds to the doctor AND check if it is available
+		do {
+			try {
+				System.out.print("Please enter the appointment ID: " );
+				appointmentID = Integer.parseInt(in.readLine());
+				
+				// Check if appointment exists in has_appointment
+				query = "SELECT * FROM has_appointment WHERE appt_ID = " + appointmentID;
+				List<List<String>> result = esql.executeQueryAndReturnResult(query);
+				if (result.isEmpty()) {
+					System.out.println("The appointment number does not exist!");
+					continue;
+				}
+				List<String> record = result.get(0);
+
+				// Check if Doctor ID matches for given appointment
+				if (doctorID != Integer.parseInt(record.get(1))) {
+					System.out.println("The appointment does not correspond to the doctor!");
+					continue;
+				}
+
+				// Check if appointment is available
+				query = "SELECT * FROM Appointment WHERE appnt_ID = " + appointmentID;
+				result = esql.executeQueryAndReturnResult(query);
+				record = result.get(0);
+
+				if (!record.get(3).equals("AV")) {
+					System.out.println("Appointment is not available!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input." + e.getMessage());
+			}
+		}while(true);
+
+		// execute updaete here
+		System.out.println("Success!");
+
 	}
 
 	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
