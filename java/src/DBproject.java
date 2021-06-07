@@ -301,6 +301,78 @@ public class DBproject{
 	}
 
 	public static void AddPatient(DBproject esql) {//2
+		int id;
+		String name;
+		String gender;
+		int age;
+		String address;
+		String query;		
+
+		// Get patient id
+		do {
+			System.out.print("Please enter the patient id: ");
+			try {
+				id = Integer.parseInt(in.readLine());
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be an integer.");
+				continue;
+			}
+		}while (true);
+
+		// Get patient name
+		do {
+			System.out.print("Please enter the patient name: ");
+			try {
+				name = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while (true);
+
+		// Get Gender
+		do {
+			System.out.print("Please enter the patient's gender: ");
+			try {
+				gender = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a character.");
+				continue;
+			}
+		}while (true);
+
+		// Get Age
+		do {
+			System.out.print("Please enter the patient's age: ");
+			try {
+				age = Integer.parseInt(in.readLine());
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be an integer.");
+				continue;
+			}
+		}while (true);
+		// Get Address
+		do {
+			System.out.print("Please enter the patient's address: ");
+			try {
+				address = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while(true);
+
+		try {
+			query = "INSERT INTO Patient (patient_ID, name, gtype, age, address) VALUES ";
+			query += String.format("('%2d', '%s', '%s', '%2d', '%s')", id, name, gender, age, address); 
+		}catch(Exception e) {
+			System.out.println("Insert Patient Query Failed");
+		}
 	}
 
 	public static void AddAppointment(DBproject esql) {//3
