@@ -472,6 +472,84 @@ public class DBproject{
 
 	public static void ListAvailableAppointmentsOfDepartment(DBproject esql) {//6
 		// For a department name and a specific date, find the list of available appointments of the department
+		String hospitalName;
+		int hospitalID;
+		String departmentName;
+		int departmentID;
+		String date;
+		String query;
+
+		List<List<String>> result;
+		List<String> record;
+
+		// Get a hospital name (keyword such as UCLA, USC) that is valid
+		do {
+			try {
+				System.out.print("Please enter the hospital name: ");
+				hospitalName = in.readLine();
+
+				query = "SELECT * FROM Hospital WHERE LOWER(name) LIKE LOWER('%" + hospitalName + "%')"; 
+				result = esql.executeQueryAndReturnResult(query);
+
+				if (result.isEmpty()) {
+					System.out.println("Did not find a hospital with that name.");
+					continue;
+				}
+
+				record = result.get(0);
+				System.out.println("Selected Record: " + record);
+				hospitalID = Integer.parseInt(record.get(0));
+
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input." + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// Get valid department name for chosen hospital
+		do {
+			try {
+				System.out.print("Please enter a departnment name: ");
+				departmentName = in.readLine();
+
+				query = String.format("SELECT * FROM Department WHERE hid = %s AND LOWER(name) LIKE ", hospitalID);
+				query += "LOWER('%" + departmentName + "%')";
+
+				//System.out.println("Query = " + query);
+				result = esql.executeQueryAndReturnResult(query);
+
+				if (result.isEmpty()) {
+					System.out.println("Did not find a department with that name.");
+					continue;
+				}
+
+				record = result.get(0);
+				System.out.println("Selected Record: " + record);
+				departmentID = Integer.parseInt(record.get(0));
+
+				break;
+			}catch(Exception e) {
+				System.out.println("Incorrect input. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+	
+		// Get a date
+		do {
+			try {
+				System.out.print("Please enter the data. MM/DD/YY: ");
+				date = in.readLine();
+
+				break;
+			}catch(Exception e) {
+				System.out.println("Incorrect input. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// Query
+
 	}
 
 	public static void ListStatusNumberOfAppointmentsPerDoctor(DBproject esql) {//7
@@ -481,5 +559,37 @@ public class DBproject{
 	
 	public static void FindPatientsCountWithStatus(DBproject esql) {//8
 		// Find how many patients per doctor there are with a given status (i.e. PA, AC, AV, WL) and list that number per doctor.
+		String status;
+		String query;
+
+		List<List<String>> results;
+		List<String> record;
+
+		// Get the status
+		do {
+			try {
+				System.out.print("Please enter the appointment status: ");
+				status = in.readLine();
+				if (!(status.equals("PA") || status.equals("AC") || status.equals("AV") || status.equals("WL"))) {
+					System.out.println("Not a valid input!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println(e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// Query
+		try {
+			query = "SELECT D.name, COUNT(A.appnt_ID) AS num_patients FROM Appointment A, Doctor D, has_appointment H ";
+			query += "WHERE D.doctor_ID = H.doctor_id AND H.appt_id = A.appnt_ID AND A.status = '" + status + "' ";
+			query += "GROUP BY D.name, D.did ORDER BY num_patients DESC";
+			//System.out.println("query: " + query);
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
