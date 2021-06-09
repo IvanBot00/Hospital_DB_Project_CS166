@@ -443,6 +443,67 @@ public class DBproject{
 	}
 
 	public static void AddAppointment(DBproject esql) {//3
+		int aid;
+		String date;
+		String time;
+		int stat;
+		String appq;
+		String query;
+
+		//get appointment ID
+		do {
+			try {
+				appq = "SELECT * FROM Appointment;"
+				aid = esql.executeQuery(appq) + 1;
+				break;
+			}catch (Exception e) {
+				System.out.println("Error creating appnt_ID.");
+				continue;
+			}
+		} while(true);
+
+		// Get date
+		do {
+			System.out.print("Please enter the date of appointment: ");
+			try {
+				date = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while (true);
+
+		// Get time slot
+		do {
+			System.out.print("Please enter the time slot: ");
+			try {
+				time = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while (true);
+
+		//get status
+		do {
+			try {
+				stat = 'AC';
+				break;
+			}catch (Exception e) {
+				System.out.println("Error creating appointment status.");
+				continue;
+			}
+		}while(true);
+
+		try {
+			query = "INSERT INTO Appointment (aid, date, time, stat) VALUES ";
+			query += String.format("('%2d', '%s', '%s', '%2d)", appnt_ID, adate, time_slot, status);
+			esql.executeUpdate(query);
+		}catch(Exception e) {
+			System.out.println("Insert Appointment Query Failed");
+		}
 	}
 
 
