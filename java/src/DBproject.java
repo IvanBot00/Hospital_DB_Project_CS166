@@ -310,12 +310,17 @@ public class DBproject{
 
 		// Get patient id
 		do {
-			System.out.print("Please enter the patient id: ");
+			//System.out.print("Please enter the patient id: ");
 			try {
-				id = Integer.parseInt(in.readLine());
+				//id = Integer.parseInt(in.readLine());
+				query = "SELECT COUNT(patient_ID) FROM Patient";
+				List<String> record = esql.executeQueryAndReturnResult(query).get(0);
+				int rows = Integer.parseInt(record.get(0));
+				//System.out.println("Num record: " + rows);
+				id = rows + 1;
 				break;
 			}catch (Exception e) {
-				System.out.println("Your input must be an integer.");
+				System.out.println(e.getMessage());
 				continue;
 			}
 		}while (true);
@@ -334,9 +339,13 @@ public class DBproject{
 
 		// Get Gender
 		do {
-			System.out.print("Please enter the patient's gender: ");
+			System.out.print("Please enter the patient's gender M/F: ");
 			try {
 				gender = in.readLine();
+				if (!(gender.equals("M") || gender.equals("F"))) {
+					System.out.println("Please enter M or F.");
+					continue;
+				}
 				break;
 			}catch (Exception e) {
 				System.out.println("Your input must be a character.");
@@ -372,7 +381,16 @@ public class DBproject{
 			query += String.format("('%2d', '%s', '%s', '%2d', '%s')", id, name, gender, age, address); 
 			esql.executeUpdate(query);
 		}catch(Exception e) {
-			System.out.println("Insert Patient Query Failed");
+			System.out.println("Insert Patient Query Failed" + e.getMessage());
+		}
+
+		try {
+			query = "SELECT * FROM Patient WHERE patient_ID = " + id;
+			List<List<String>> result = esql.executeQueryAndReturnResult(query);
+			List<String> record = result.get(0);
+			System.out.println("Inserted Record: " + record);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -386,8 +404,15 @@ public class DBproject{
 		int doctorID;
 		int appointmentID;
 		String query;
+		String hospitalName;
+		String departmentName;
+		int hospitalID;
+		int departmentID;
 
-		// Get patient id
+		List<List<String>> result;
+		List<String> record;
+
+		//#region Get Patient ID
 		do {
 			try {
 				System.out.print("Please enter the patient ID: ");
@@ -405,82 +430,17 @@ public class DBproject{
 				continue;
 			}
 		}while(true);
-
-		// get doctor id
-		do {
-			try {
-				System.out.print("Please enter the doctor ID: ");
-				doctorID = Integer.parseInt(in.readLine());	
-
-				query = "SELECT * FROM Doctor WHERE doctor_ID = " + doctorID;
-				int rows = esql.executeQuery(query);
-				if (rows != 1) {
-					System.out.println("That doctor does not exist!");
-					continue;
-				}
-				break;
-			}catch(Exception e) {
-				System.out.println("Invalid input. " + e.getMessage());
-				continue;
-			}
-		}while(true);
-
-		// get appointment id AND check if it corresponds to the doctor AND check if it is available
-		do {
-			try {
-				System.out.print("Please enter the appointment ID: " );
-				appointmentID = Integer.parseInt(in.readLine());
-				
-				// Check if appointment exists in has_appointment
-				query = "SELECT * FROM has_appointment WHERE appt_ID = " + appointmentID;
-				List<List<String>> result = esql.executeQueryAndReturnResult(query);
-				if (result.isEmpty()) {
-					System.out.println("The appointment number does not exist!");
-					continue;
-				}
-				List<String> record = result.get(0);
-
-				// Check if Doctor ID matches for given appointment
-				if (doctorID != Integer.parseInt(record.get(1))) {
-					System.out.println("The appointment does not correspond to the doctor!");
-					continue;
-				}
-
-				// Check if appointment is available
-				query = "SELECT * FROM Appointment WHERE appnt_ID = " + appointmentID;
-				result = esql.executeQueryAndReturnResult(query);
-				record = result.get(0);
-
-				if (!record.get(3).equals("AV")) {
-					System.out.println("Appointment is not available!");
-					continue;
-				}
-				break;
-			}catch(Exception e) {
-				System.out.println("Invalid input." + e.getMessage());
-			}
-		}while(true);
-
-		// execute updaete here
-		System.out.println("Success!");
-
-	}
-
-	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
-		// For a doctor ID and a date range, find the list of active and available appointments of the doctor
-	}
-
-	public static void ListAvailableAppointmentsOfDepartment(DBproject esql) {//6
-		// For a department name and a specific date, find the list of available appointments of the department
-		String hospitalName;
-		int hospitalID;
-		String departmentName;
-		int departmentID;
-		String date;
-		String query;
-
-		List<List<String>> result;
-		List<String> record;
+		//#endregion
+	
+		//#region Print list of hospitals and get hospital name
+		System.out.println("========== Hospital List ==========");
+		try {
+			query = "SELECT name FROM Hospital";
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("===================================");
 
 		// Get a hospital name (keyword such as UCLA, USC) that is valid
 		do {
@@ -506,6 +466,18 @@ public class DBproject{
 				continue;
 			}
 		}while(true);
+		//#endregion
+		
+		//#region Print out departments for that hospital and get department name
+		System.out.println("========== Department List ==========");
+		// Print out list of departments for that hospital
+		try {
+			query = "SELECT name FROM Department WHERE hid = " + hospitalID;
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("=====================================");
 
 		// Get valid department name for chosen hospital
 		do {
@@ -534,7 +506,216 @@ public class DBproject{
 				continue;
 			}
 		}while(true);
-	
+		//#endregion
+		
+		//#region Print out doctor list for that department and get doctor id
+		System.out.println("================= Doctor List ================");
+		try {
+			query = "SELECT Doc.doctor_ID, Doc.name, Dep.name FROM Doctor Doc, Department Dep WHERE Doc.did = Dep.dept_ID ";
+			query += String.format("AND Dep.hid = %2d AND Dep.dept_ID = %2d", hospitalID, departmentID);
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("===================================");
+
+		// get doctor id
+		do {
+			try {
+				System.out.print("Please enter the doctor ID: ");
+				doctorID = Integer.parseInt(in.readLine());	
+
+				query = "SELECT * FROM Doctor WHERE doctor_ID = " + doctorID;
+				int rows = esql.executeQuery(query);
+				if (rows != 1) {
+					System.out.println("That doctor does not exist!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+		//#endregion
+
+		//#region Print list of that doctor's available appointments 
+		System.out.println("========== Available Appointments ==========");
+		try {
+			query = "SELECT A.appnt_ID, A.adate FROM Appointment A, has_appointment H WHERE H.appt_id = A.appnt_ID AND A.status = 'AV' ";
+			query += String.format("AND H.doctor_id = %2d", doctorID);
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("============================================");
+
+		// get appointment id AND check if it corresponds to the doctor AND check if it is available
+		do {
+			try {
+				// Check if that doc has any at all
+				query = "SELECT * FROM Appointment A, has_appointment H WHERE A.appnt_ID = H.appt_id AND A.status = 'AV' ";
+				query += String.format("AND H.doctor_id = %2d", doctorID);
+				int rows = esql.executeQuery(query);
+				if (rows == 0) {
+					System.out.println("This doctor has no appointments available!");
+					return;
+				}
+
+				System.out.print("Please enter the appointment ID: " );
+				appointmentID = Integer.parseInt(in.readLine());
+				
+				// Check if appointment exists in has_appointment
+				query = "SELECT * FROM has_appointment WHERE appt_ID = " + appointmentID;
+				result = esql.executeQueryAndReturnResult(query);
+				if (result.isEmpty()) {
+					System.out.println("The appointment number does not exist!");
+					continue;
+				}
+				record = result.get(0);
+
+				// Check if Doctor ID matches for given appointment
+				if (doctorID != Integer.parseInt(record.get(1))) {
+					System.out.println("The appointment does not correspond to the doctor!");
+					continue;
+				}
+
+				// Check if appointment is available
+				query = "SELECT * FROM Appointment WHERE appnt_ID = " + appointmentID;
+				result = esql.executeQueryAndReturnResult(query);
+				record = result.get(0);
+
+				if (!record.get(3).equals("AV")) {
+					System.out.println("Appointment is not available!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input." + e.getMessage());
+			}
+		}while(true);
+		//#endregion
+
+		// execute update here
+		try {
+			query = "UPDATE Appointment SET status = 'AC' WHERE A.appnt_ID = " + appointmentID;
+			esql.executeUpdate(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			query = "SELECT * FROM Appointment WHERE appnt_ID = " + appointmentID;
+			result = esql.executeQueryAndReturnResult(query);
+			record = result.get(0);
+			System.out.println("Updated Record: " + record);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("Success!");
+
+	}
+
+	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
+		// For a doctor ID and a date range, find the list of active and available appointments of the doctor
+	}
+
+	public static void ListAvailableAppointmentsOfDepartment(DBproject esql) {//6
+		// For a department name and a specific date, find the list of available appointments of the department
+		String hospitalName;
+		int hospitalID;
+		String departmentName;
+		int departmentID;
+		String date;
+		String query;
+
+		List<List<String>> result;
+		List<String> record;
+
+		// Print out list of hospitals
+		System.out.println("========== Hospital List ==========");
+		try {
+			query = "SELECT name FROM Hospital";
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("===================================");
+
+		// Get a hospital name (keyword such as UCLA, USC) that is valid
+		do {
+			try {
+				System.out.print("Please enter the hospital name: ");
+				hospitalName = in.readLine();
+
+				query = "SELECT * FROM Hospital WHERE LOWER(name) LIKE LOWER('%" + hospitalName + "%')"; 
+				result = esql.executeQueryAndReturnResult(query);
+
+				if (result.isEmpty()) {
+					System.out.println("Did not find a hospital with that name.");
+					continue;
+				}
+
+				record = result.get(0);
+				System.out.println("Selected Record: " + record);
+				hospitalID = Integer.parseInt(record.get(0));
+
+				break;
+			}catch(Exception e) {
+				System.out.println("Invalid input." + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		System.out.println("========== Department List ==========");
+		// Print out list of departments for that hospital
+		try {
+			query = "SELECT name FROM Department WHERE hid = " + hospitalID;
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("=====================================");
+
+		// Get valid department name for chosen hospital
+		do {
+			try {
+				System.out.print("Please enter a departnment name: ");
+				departmentName = in.readLine();
+
+				query = String.format("SELECT * FROM Department WHERE hid = %s AND LOWER(name) LIKE ", hospitalID);
+				query += "LOWER('%" + departmentName + "%')";
+
+				//System.out.println("Query = " + query);
+				result = esql.executeQueryAndReturnResult(query);
+
+				if (result.isEmpty()) {
+					System.out.println("Did not find a department with that name.");
+					continue;
+				}
+
+				record = result.get(0);
+				System.out.println("Selected Record: " + record);
+				departmentID = Integer.parseInt(record.get(0));
+
+				break;
+			}catch(Exception e) {
+				System.out.println("Incorrect input. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		// Display available dates for that department
+		System.out.println("========== Available Dates List ==========");
+		try {
+			query = "SELECT A.adate FROM Appointment A, Doctor D, has_appointment H WHERE A.status = 'AV' ";
+			query += String.format("AND D.did = %2d AND H.doctor_id = D.doctor_ID and H.appt_id = A.appnt_ID", departmentID);
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+		System.out.println("==========================================");
+
 		// Get a date
 		do {
 			try {
@@ -549,7 +730,13 @@ public class DBproject{
 		}while(true);
 
 		// Query
-
+		try {
+			query = "SELECT * FROM Appointment A, Doctor D, has_appointment H WHERE A.status = 'AV' AND A.adate = '" + date + "' ";
+			query += String.format("AND D.did = %2d AND H.doctor_id = D.doctor_ID AND H.appt_id = A.appnt_ID", departmentID);
+			esql.executeQueryAndPrintResult(query);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public static void ListStatusNumberOfAppointmentsPerDoctor(DBproject esql) {//7
