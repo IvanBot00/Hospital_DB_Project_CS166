@@ -310,7 +310,6 @@ public class DBproject{
 		//Get doctorid
 		do {
 			try {
-				sid = in.readLine();
 				docq = "SELECT * FROM Doctor;"
 				sid = esql.executeQuery(docq) + 1;
 				break;
