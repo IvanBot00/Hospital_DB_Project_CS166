@@ -311,8 +311,8 @@ public class DBproject{
 		do {
 			try {
 				sid = in.readLine();
-				docq = "SELECT MAX(doctor_ID) FROM Doctor;"
-				sid = esql.executeQueryAndReturnResult(docq) + 1;
+				docq = "SELECT * FROM Doctor;"
+				sid = esql.executeQuery(docq) + 1;
 				break;
 			}catch (Exception e) {
 				System.out.println("Error creating doctor_ID.");
@@ -349,8 +349,8 @@ public class DBproject{
 			System.out.print("Please enter the name of hospital department the doctor works in: ");
 			try {
 				hospital = in.readLine();
-				departq = "SELECT MAX(department_ID) FROM Department;"
-				did = esql.executeQueryAndReturnResult(departq) + 1;
+				departq = "SELECT * FROM Department;"
+				did = esql.executeQuery(departq) + 1;
 				break;
 			}catch (Exception e) {
 				System.out.println("Your input must be a string.");
