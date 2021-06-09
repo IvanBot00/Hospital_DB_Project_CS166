@@ -298,6 +298,71 @@ public class DBproject{
 	}//end readChoice
 
 	public static void AddDoctor(DBproject esql) {//1
+		int sid;
+		String name;
+		String specialty;
+		String hospital;
+		int did;
+		String query;
+		String docq;
+		String departq;
+
+		//Get doctorid
+		try {
+			sid = in.readLine();
+			docq = "SELECT MAX(doctor_ID) FROM Doctor;"
+			sid = esql.executeQueryAndReturnResult(docq) + 1;
+			break;
+		}catch (Exception e) {
+			System.out.println("Error creating doctor_ID.");
+			continue;
+		}
+
+		//Get name
+		do {
+			System.out.print("Please enter the doctor's name: ");
+			try {
+				name = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while(true);
+
+		//Get specialty
+		do {
+			System.out.print("Please enter the doctor's specialty: ");
+			try {
+				specialty = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while(true);
+
+		//Get did
+		do {
+			System.out.print("Please enter the name of hospital department the doctor works in: ");
+			try {
+				hospital = in.readLine();
+				departq = "SELECT MAX(department_ID) FROM Department;"
+				did = esql.executeQueryAndReturnResult(departq) + 1;
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}while(true);
+
+		try {
+			query = "INSERT INTO Patient (doctor_ID, name, specialty, did) VALUES ";
+			query += String.format("('%2d', '%s', '%s', '%2d)", sid, name, specialty, did);
+			esql.executeUpdate(query);
+		}catch(Exception e) {
+			System.out.println("Insert Doctor Query Failed");
+		}
 	}
 
 	public static void AddPatient(DBproject esql) {//2
