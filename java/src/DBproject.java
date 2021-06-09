@@ -308,15 +308,17 @@ public class DBproject{
 		String departq;
 
 		//Get doctorid
-		try {
-			sid = in.readLine();
-			docq = "SELECT MAX(doctor_ID) FROM Doctor;"
-			sid = esql.executeQueryAndReturnResult(docq) + 1;
-			break;
-		}catch (Exception e) {
-			System.out.println("Error creating doctor_ID.");
-			continue;
-		}
+		do {
+			try {
+				sid = in.readLine();
+				docq = "SELECT MAX(doctor_ID) FROM Doctor;"
+				sid = esql.executeQueryAndReturnResult(docq) + 1;
+				break;
+			}catch (Exception e) {
+				System.out.println("Error creating doctor_ID.");
+				continue;
+			}
+		}while(true);
 
 		//Get name
 		do {
