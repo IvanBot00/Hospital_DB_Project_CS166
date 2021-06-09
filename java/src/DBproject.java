@@ -535,6 +535,63 @@ public class DBproject{
 
 	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
 		// For a doctor ID and a date range, find the list of active and available appointments of the doctor
+		int docID;
+		String date1;
+		Strings date2;
+		string query;
+
+		//Get doctor id
+		do {
+			try {
+				System.out.print("Please enter doctor ID: ");
+				docID = Integer.parseInt(in.readLine());
+
+				query = "SELECT * FROM Doctor WHERE doctor_ID = " + docID;
+				int rows = esql.executeQuery(query);
+				if (row != 1) {
+					System.out.println("That doctor doesn't exist!");
+					continue;
+				}
+				break;
+			}catch(Exception e) {
+				System.out.println("Input is invalid. " + e.getMessage());
+				continue;
+			}
+		}while(true);
+
+		//Get first date
+		do {
+			try {
+				System.out.print("Please enter first date: ");
+				date1 = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}
+
+		//Get second date
+		do {
+			try {
+				System.out.print("Please enter second date: ");
+				date2 = in.readLine();
+				break;
+			}catch (Exception e) {
+				System.out.println("Your input must be a string.");
+				continue;
+			}
+		}
+
+		//Get all active and available appointments
+		query = "SELECT * FROM has_appointment H, Doctor D, Appointment A WHERE h.doctor_ID = " + docID;
+		query += "AND h.appt_id = A.appnt_ID AND A.status = 'AC' OR 'AV' AND A.adate BETWEEN ";
+		query = query + date1 + " AND " + date2;
+		List<List<String>> result = esql.executeQueryAndReturnResult(query);
+		if (result.isEmpty()) {
+			System.out.println("No available or active appointments");
+			continue;
+		}
 	}
 
 	public static void ListAvailableAppointmentsOfDepartment(DBproject esql) {//6
