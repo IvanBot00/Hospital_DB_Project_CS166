@@ -308,7 +308,7 @@ public class DBproject{
 		String address;
 		String query;		
 
-		// Get patient id
+		// Automatically determine patient ID
 		do {
 			//System.out.print("Please enter the patient id: ");
 			try {
@@ -358,6 +358,10 @@ public class DBproject{
 			System.out.print("Please enter the patient's age: ");
 			try {
 				age = Integer.parseInt(in.readLine());
+				if ((age < 0) || (age > 130)) {
+					System.out.println("Age must be in range: 0 - 130");
+					continue;
+				}
 				break;
 			}catch (Exception e) {
 				System.out.println("Your input must be an integer.");
@@ -513,6 +517,10 @@ public class DBproject{
 		try {
 			query = "SELECT Doc.doctor_ID, Doc.name, Dep.name FROM Doctor Doc, Department Dep WHERE Doc.did = Dep.dept_ID ";
 			query += String.format("AND Dep.hid = %2d AND Dep.dept_ID = %2d", hospitalID, departmentID);
+			if (esql.executeQuery(query) < 1) {
+				System.out.println("There are no doctors in this department");
+				return;
+			}
 			esql.executeQueryAndPrintResult(query);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -556,8 +564,7 @@ public class DBproject{
 				// Check if that doc has any at all
 				query = "SELECT * FROM Appointment A, has_appointment H WHERE A.appnt_ID = H.appt_id AND A.status = 'AV' ";
 				query += String.format("AND H.doctor_id = %2d", doctorID);
-				int rows = esql.executeQuery(query);
-				if (rows == 0) {
+				if (esql.executeQuery(query) < 1) {
 					System.out.println("This doctor has no appointments available!");
 					return;
 				}
@@ -598,10 +605,10 @@ public class DBproject{
 
 		// execute update here
 		try {
-			query = "UPDATE Appointment SET status = 'AC' WHERE A.appnt_ID = " + appointmentID;
+			query = "UPDATE Appointment SET status = 'AC' WHERE appnt_ID = " + appointmentID;
 			esql.executeUpdate(query);
 		}catch(Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("Here I cry: " + e.getMessage());
 		}
 
 		try {
@@ -710,6 +717,10 @@ public class DBproject{
 		try {
 			query = "SELECT A.adate FROM Appointment A, Doctor D, has_appointment H WHERE A.status = 'AV' ";
 			query += String.format("AND D.did = %2d AND H.doctor_id = D.doctor_ID and H.appt_id = A.appnt_ID", departmentID);
+			if (esql.executeQuery(query) < 1) {
+				System.out.println("There are no available dates.");
+				return;
+			}
 			esql.executeQueryAndPrintResult(query);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -755,7 +766,7 @@ public class DBproject{
 		// Get the status
 		do {
 			try {
-				System.out.print("Please enter the appointment status: ");
+				System.out.print("Please enter the appointment status (PA, AC, AV, WL): ");
 				status = in.readLine();
 				if (!(status.equals("PA") || status.equals("AC") || status.equals("AV") || status.equals("WL"))) {
 					System.out.println("Not a valid input!");
