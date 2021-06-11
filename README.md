@@ -29,7 +29,7 @@ Error checking is done for selecting a time slot. \
 
 ## Problem 4 - Make Appointment
 
-The make appointment function lets the user make an appointment from appointmens which are available ('AV'). The appointment is then marked as active ('AC').
+The make appointment function lets the user make an appointment from appointments which are available ('AV'). The appointment is then marked as active ('AC').
 
 ![Normal input](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q4normal1.png)
 ![Normal input 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q4normal2.png)
