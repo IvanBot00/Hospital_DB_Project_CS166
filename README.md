@@ -3,8 +3,11 @@ Group 22: Jourdon Freeman & Ivan Carrillo \
 Odd Problems (1, 3, 5, 7): Jourdon Freeman \
 Even Problems (2, 4, 6, 8): Ivan Carrillo \
 
-## Problem 1
-
+## Problem 1 - Add Doctor
+The add doctor function takes in a doctor's name and specialty. \
+![add doctor 1](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal1.png)
+![add doctor 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal2.png)
+![add doctor 3](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal3.png)
 ## Problem 2 - Add Patient
 
 The add patient function takes in a name, gender, age and address. \
@@ -15,7 +18,11 @@ Error checking is done for the gender and age fields. \
 
 The age input must be between 0 and 150.
 
-## Problem 3
+## Problem 3 - Add Appointment
+The add appointment functions creates a new available appointment for a doctor. \
+![add appointment 1](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q3normal1.png)
+![add appointment 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal2.png)
+![add appointment 3](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal3.png)
 
 ## Problem 4 - Make Appointment
 
@@ -35,7 +42,10 @@ The program also returns to the main menu when the chosen doctor has no availabl
 
 ![No appointment available](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q4noapp.png)
 
-## Problem 5
+## Problem 5 - List Appointments in a Date Range
+The program lists all appointments of a given doctor with a given range of dates.
+
+![List date range appointments](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q5normal.png)
 
 ## Problem 6 - List Available Appointments
 
