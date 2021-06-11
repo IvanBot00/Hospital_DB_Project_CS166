@@ -24,6 +24,9 @@ The add appointment functions creates a new available appointment for a doctor. 
 ![add appointment 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal2.png)
 ![add appointment 3](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q1normal3.png)
 
+Error checking is done for selecting a time slot. \
+![appointment error](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q3error.png)
+
 ## Problem 4 - Make Appointment
 
 The make appointment function lets the user make an appointment from appointmens which are available ('AV'). The appointment is then marked as active ('AC').
