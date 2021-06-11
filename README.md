@@ -58,7 +58,11 @@ The program lists all the appointments available for a given doctor.
 
 
 
-## Problem 7
+## Problem 7 - List Amount of Different Appointments per doctor
+The program list how many different types of appointments every doctor has
+![different appointment types 1](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal1.png)
+![different appointment types 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal2.png)
+![different appointment types 3](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal3.png)
 
 ## Problem 8
 
