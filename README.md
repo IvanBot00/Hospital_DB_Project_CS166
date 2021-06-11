@@ -1,7 +1,7 @@
 # Hospital Database Project CS166
 Group 22: Jourdon Freeman & Ivan Carrillo \
 Odd Problems (1, 3, 5, 7): Jourdon Freeman \
-Even Problems (2, 4, 6, 8): Ivan Carrillo \
+Even Problems (2, 4, 6, 8): Ivan Carrillo
 
 ## Problem 1 - Add Doctor
 The add doctor function takes in a doctor's name and specialty. \
@@ -59,7 +59,7 @@ The program lists all the appointments available for a given doctor.
 
 
 ## Problem 7 - List Amount of Different Appointments per doctor
-The program list how many different types of appointments every doctor has
+The program list how many different types of appointments every doctor has \
 ![different appointment types 1](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal1.png)
 ![different appointment types 2](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal2.png)
 ![different appointment types 3](https://github.com/IvanBot00/Hospital_DB_Project_CS166/blob/main/images/q7normal3.png)
